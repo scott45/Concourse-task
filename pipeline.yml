@@ -8,13 +8,13 @@ jobs:
     - put: scott-image_build_image
       params: {build: scott-image_build_image}
 
-- name: something-every-1:30hr
+- name: build-every-1:30hr
   plan:
   - aggregate:
     - get: after-midnight
       trigger: true
     - get: bucketlist-code
-        trigger: true
+      trigger: true
 
   - task: run-bucketlist-tests
     config:
@@ -26,13 +26,31 @@ jobs:
       run:
         path: ./tests
 
-- name: something-after-midnight
+- name: build-every-after-midnight
+  plan:
+  - aggregate:
+    - get: after-midnight
+      trigger: true
+    - get: bucketlist-code
+      trigger: true
+
+  - task: run-bucketlist-tests
+    config:
+      platform: linux
+      image: docker:///1994scott/scott-image
+      inputs: 
+      - name: bucketlist-code
+        path: .
+      run:
+        path: ./tests
+
+- name: deploy-to-heroku
   plan:
   - aggregate:
     - get: every-1:30hrs
       trigger: true
     - get: bucketlist-code
-        trigger: true
+      trigger: true
 
   - task: run-bucketlist-tests
     config:
@@ -43,7 +61,7 @@ jobs:
         path: .
       run:
         path: ./tests
-        
+
 resources:
 - name: scott-image_dockerfile
   type: git
@@ -76,3 +94,16 @@ resources:
     start: 12:00 AM
     stop: 02:00 AM
     location: Africa/Nairobi
+
+resource_types:
+- name: heroku-resource
+  type: docker-image
+  source:
+    repository: periscopedata/heroku-resource
+    tag: latest
+
+- name: heroku
+  type: heroku-resource
+  source:
+    heroku_api_key: {{HEROKU_API_KEY}}
+    heroku_app_name: {{HEROKU_APP_NAME}}
