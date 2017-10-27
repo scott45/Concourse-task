@@ -1,0 +1,78 @@
+jobs:
+- name: scott-image_build_job
+  serial: true
+  plan:
+  - aggregate:
+    - get: scott-image_dockerfile
+      trigger: true
+    - put: scott-image_build_image
+      params: {build: scott-image_build_image}
+
+- name: something-every-1:30hr
+  plan:
+  - aggregate:
+    - get: after-midnight
+      trigger: true
+    - get: bucketlist-code
+        trigger: true
+
+  - task: run-bucketlist-tests
+    config:
+      platform: linux
+      image: docker:///1994scott/scott-image
+      inputs: 
+      - name: bucketlist-code
+        path: .
+      run:
+        path: ./tests
+
+- name: something-after-midnight
+  plan:
+  - aggregate:
+    - get: every-1:30hrs
+      trigger: true
+    - get: bucketlist-code
+        trigger: true
+
+  - task: run-bucketlist-tests
+    config:
+      platform: linux
+      image: docker:///1994scott/scott-image
+      inputs: 
+      - name: bucketlist-code
+        path: .
+      run:
+        path: ./tests
+        
+resources:
+- name: scott-image_dockerfile
+  type: git
+  source:
+   uri: https://github.com/scott45/Concourse-task.git
+   branch: master
+   paths: [Dockerfile]
+
+- name: scott-image_build_image
+  type: docker-image
+  source:
+   repository: 1994scott/scott-image
+   email: {{DOCKER_MAIL}}
+   username: {{DOCKER_USER}}
+   password: {{DOCKER_PASS}}
+
+- name: bucketlist-code
+  type: git
+  source:
+   uri: https://github.com/scott45/checkpoint2-bucketlist.git
+   branch: master
+
+- name: every-1:30hrs
+  type: time
+  source: {interval: 90m}
+
+- name: after-midnight
+  type: time
+  source:
+    start: 12:00 AM
+    stop: 02:00 AM
+    location: Africa/Nairobi
