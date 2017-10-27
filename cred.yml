@@ -1,10 +1,12 @@
 DOCKER_USER: 1994scott
 DOCKER_MAIL: businge.scott@andela.com
 DOCKER_PASS: devops
+HEROKU_API_KEY: 4316ad9c-1cbb-4730-8eb9-6543fd8082a0
+HEROKU_APP_NAME: herokubucketlist
 
-# fly set-pipeline -p docker-images-pipeline -c pipeline.yml -l credentials.yml
 # download fly on concourse
 # chmod +x /Users/scotty/Desktop/concourse/fly
 # sudo mv /Users/scotty/Desktop/concourse/fly /usr/local/bin/fly
 # fly -h
 # fly -t lite login -c http://192.168.100.4:8080 to save target
+# fly -t lite set-pipeline -p scott-image -c pipeline.yml -l cred.yml
