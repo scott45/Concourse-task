@@ -1,7 +1,7 @@
 DOCKER_USER: 1994scott
-DOCKER_MAIL: businge.scott@andela.com
-DOCKER_PASS: devops
-HEROKU_API_KEY: 4316ad9c-1cbb-4730-8eb9-6543fd8082a0
+DOCKER_MAIL: b***e.s***t@andela.com
+DOCKER_PASS: *****
+HEROKU_API_KEY: 4***********8082a0
 HEROKU_APP_NAME: herokubucketlist
 
 # download fly on concourse
