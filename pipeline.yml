@@ -68,7 +68,7 @@ resources:
   source:
    uri: https://github.com/scott45/Concourse-task.git
    branch: master
-   paths: [Dockerfile]
+   path: ./Dockerfile
 
 - name: scott-image_build_image
   type: docker-image
